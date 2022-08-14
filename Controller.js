@@ -1,15 +1,21 @@
+const Model = require('./Model');
+const View = require('./View');
+
 class Controller {
   #model;
   #view;
 
-  constructor(model, view) {
-    this.#model = model;
-    this.#view = view;
+  constructor() {
+    this.#model = new Model({
+      onUpdate: () => this.#view.render(),
+    });
 
-    this.#view.on('userChoseTopicIndex', (topicIndex) => this.#model.chooseTopic(topicIndex));
-    this.#view.on('userAnswered', (answer) => this.#model.checkAnswer(answer));
-    this.#view.on('userRequestedNextQuestion', () => this.#model.nextQuestion());
-    this.#view.on('userRequestedNewGame', () => this.#model.newGame());
+    this.#view = new View(this.#model, {
+      onUserChoseTopicIndex: (topicIndex) => this.#model.chooseTopic(topicIndex),
+      onUserAnswered: (answer) => this.#model.checkAnswer(answer),
+      onUserRequestedNextQuestion: () => this.#model.nextQuestion(),
+      onUserRequestedNewGame: () => this.#model.newGame(),
+    });
   }
 
   run() {

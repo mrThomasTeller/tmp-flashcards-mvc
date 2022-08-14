@@ -1,6 +1,5 @@
 const fs = require('fs').promises;
 const path = require('path');
-const { EventEmitter } = require('events');
 
 const pages = {
   chooseTopic: 'chooseTopic',
@@ -9,7 +8,7 @@ const pages = {
   result: 'result',
 };
 
-class Model extends EventEmitter {
+class Model {
   static #getTopicTitle(fileName) {
     return fileName.split('_')[0];
   }
@@ -22,10 +21,11 @@ class Model extends EventEmitter {
   #question;
   #questionIndex;
   #answerIsRight;
+  #onUpdate;
   #rightQuestions = 0;
 
-  constructor() {
-    super();
+  constructor({ onUpdate }) {
+    this.#onUpdate = onUpdate;
     this.#page = pages.chooseTopic;
   }
 
@@ -73,7 +73,7 @@ class Model extends EventEmitter {
     this.#topic = topics[topicIndex];
     if (!this.#topic) {
       this.#topicChooseError = 'Неправильный номер темы';
-      this.emit('update');
+      this.#onUpdate();
       return;
     }
 
@@ -83,7 +83,7 @@ class Model extends EventEmitter {
     this.#questionIndex = 0;
     // eslint-disable-next-line prefer-destructuring
     this.#question = this.#questions[this.#questionIndex];
-    this.emit('update');
+    this.#onUpdate();
   }
 
   async checkAnswer(answer) {
@@ -96,7 +96,7 @@ class Model extends EventEmitter {
 
     this.#page = pages.gameQuestionResult;
 
-    this.emit('update');
+    this.#onUpdate();
   }
 
   nextQuestion() {
@@ -108,13 +108,13 @@ class Model extends EventEmitter {
       this.#page = pages.result;
     }
 
-    this.emit('update');
+    this.#onUpdate();
   }
 
   newGame() {
     this.#page = pages.chooseTopic;
     this.#rightQuestions = 0;
-    this.emit('update');
+    this.#onUpdate();
   }
 
   async #getTopicQuestions() {
