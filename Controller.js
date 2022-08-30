@@ -7,7 +7,7 @@ class Controller {
 
   constructor() {
     this.#model = new Model();
-    this.#view = new View();
+    this.#view = new View(this.#model);
   }
 
   async run() {
@@ -17,7 +17,7 @@ class Controller {
 
     switch (page) {
       case 'chooseTopic': {
-        const newTopicIndex = view.chooseTopic();
+        const newTopicIndex = await view.chooseTopic();
         await model.chooseTopic(newTopicIndex);
         return this.run();
       }
