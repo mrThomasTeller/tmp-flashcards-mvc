@@ -17,31 +17,24 @@ class Controller {
 
     switch (page) {
       case 'chooseTopic': {
-        const newTopicIndex = view.chooseTopic(
-          model.getTopicChooseError(),
-          await model.getTopics()
-        );
+        const newTopicIndex = view.chooseTopic();
         await model.chooseTopic(newTopicIndex);
         return this.run();
       }
 
       case 'gameQuestion': {
-        const answer = view.askQuestion(model.getTopicTitle(), model.getCurrentQuestion());
+        const answer = view.askQuestion();
         await model.checkAnswer(answer);
         return this.run();
       }
 
       case 'gameQuestionResult':
-        view.showGameQuestionResult(
-          model.getTopicTitle(),
-          model.getCurrentQuestion(),
-          model.answerIsRight()
-        );
+        view.showGameQuestionResult();
         model.nextQuestion();
         return this.run();
 
       case 'result':
-        view.renderResult(model.getGameStatistics());
+        view.renderResult();
         model.newGame();
         return this.run();
 

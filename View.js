@@ -1,15 +1,23 @@
 const readlineSync = require('readline-sync');
 
 class View {
-  chooseTopic(error, topics) {
+  #model;
+
+  constructor(model) {
+    this.#model = model;
+  }
+
+  async chooseTopic() {
     console.clear();
 
+    const error = this.#model.getTopicChooseError();
     if (error) {
       console.log(error);
       console.log();
     }
     console.log('Выберете тему для игры:');
 
+    const topics = await this.#model.getTopics();
     const themesText = topics.map(({ title }, i) => `${i + 1}. ${title}`).join('\n');
 
     console.log(themesText);
@@ -18,38 +26,38 @@ class View {
     return topicNum - 1;
   }
 
-  #renderGameHeader(topicTitle) {
+  #renderGameHeader() {
     console.clear();
-    console.log(`Тема: ${topicTitle}`);
+    console.log(`Тема: ${this.#model.getTopicTitle()}`);
     console.log();
   }
 
-  askQuestion(topicTitle, currentQuestion) {
-    this.#renderGameHeader(topicTitle);
+  askQuestion() {
+    this.#renderGameHeader();
 
-    console.log(currentQuestion.question);
+    console.log(this.#model.getCurrentQuestion().question);
     console.log();
     const answer = readlineSync.question('Введите ответ: ');
     return answer;
   }
 
-  showGameQuestionResult(topicTitle, currentQuestion, isRight) {
-    this.#renderGameHeader(topicTitle);
+  showGameQuestionResult() {
+    this.#renderGameHeader();
 
-    console.log(currentQuestion.question);
+    console.log(this.#model.getCurrentQuestion().question);
     console.log();
-    if (isRight) {
+    if (this.#model.answerIsRight()) {
       console.log('Верно!');
     } else {
-      console.log(`Неверно! Правильный ответ: ${currentQuestion.answer}`);
+      console.log(`Неверно! Правильный ответ: ${this.#model.getCurrentQuestion().answer}`);
     }
     console.log();
     console.log('Нажмите любую клавишу для продолжения...');
     readlineSync.question();
   }
 
-  renderResult(gameStatistics) {
-    const { rightQuestions, totalQuestions } = gameStatistics;
+  renderResult() {
+    const { rightQuestions, totalQuestions } = this.#model.getGameStatistics();
     console.clear();
     console.log('Вы закончили игру!');
     console.log();
