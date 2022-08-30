@@ -21,11 +21,9 @@ class Model {
   #question;
   #questionIndex;
   #answerIsRight;
-  #onUpdate;
   #rightQuestions = 0;
 
-  constructor({ onUpdate }) {
-    this.#onUpdate = onUpdate;
+  constructor() {
     this.#page = pages.chooseTopic;
   }
 
@@ -73,7 +71,6 @@ class Model {
     this.#topic = topics[topicIndex];
     if (!this.#topic) {
       this.#topicChooseError = 'Неправильный номер темы';
-      this.#onUpdate();
       return;
     }
 
@@ -83,7 +80,6 @@ class Model {
     this.#questionIndex = 0;
     // eslint-disable-next-line prefer-destructuring
     this.#question = this.#questions[this.#questionIndex];
-    this.#onUpdate();
   }
 
   async checkAnswer(answer) {
@@ -95,8 +91,6 @@ class Model {
     }
 
     this.#page = pages.gameQuestionResult;
-
-    this.#onUpdate();
   }
 
   nextQuestion() {
@@ -107,14 +101,11 @@ class Model {
     } else {
       this.#page = pages.result;
     }
-
-    this.#onUpdate();
   }
 
   newGame() {
     this.#page = pages.chooseTopic;
     this.#rightQuestions = 0;
-    this.#onUpdate();
   }
 
   async #getTopicQuestions() {
