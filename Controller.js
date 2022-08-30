@@ -1,13 +1,10 @@
-const Model = require('./Model');
-const View = require('./View');
-
 class Controller {
   #model;
   #view;
 
-  constructor() {
-    this.#model = new Model();
-    this.#view = new View(this.#model);
+  constructor(model, view) {
+    this.#model = model;
+    this.#view = view;
   }
 
   async run() {
