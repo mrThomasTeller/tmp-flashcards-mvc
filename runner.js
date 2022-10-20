@@ -3,7 +3,7 @@ const View = require('./View');
 const Controller = require('./Controller');
 
 const model = new Model();
-const view = new View(model);
+const view = new View();
 const controller = new Controller(model, view);
 
 controller.run();
