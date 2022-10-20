@@ -22,7 +22,7 @@ class View {
 
     console.log(themesText);
     console.log();
-    const topicNum = readlineSync.question('Введите номер темы: ');
+    const topicNum = Number(readlineSync.question('Введите номер темы: '));
     return topicNum - 1;
   }
 
