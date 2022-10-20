@@ -1,23 +1,15 @@
 const readlineSync = require('readline-sync');
 
 class View {
-  #model;
-
-  constructor(model) {
-    this.#model = model;
-  }
-
-  async chooseTopic() {
+  async chooseTopic(error, topics) {
     console.clear();
 
-    const error = this.#model.getTopicChooseError();
     if (error) {
       console.log(error);
       console.log();
     }
     console.log('Выберете тему для игры:');
 
-    const topics = await this.#model.getTopics();
     const themesText = topics.map(({ title }, i) => `${i + 1}. ${title}`).join('\n');
 
     console.log(themesText);
@@ -26,38 +18,38 @@ class View {
     return topicNum - 1;
   }
 
-  #renderGameHeader() {
+  #renderGameHeader(topicTitle) {
     console.clear();
-    console.log(`Тема: ${this.#model.getTopicTitle()}`);
+    console.log(`Тема: ${topicTitle}`);
     console.log();
   }
 
-  askQuestion() {
+  askQuestion(question) {
     this.#renderGameHeader();
 
-    console.log(this.#model.getCurrentQuestion().question);
+    console.log(question.question);
     console.log();
     const answer = readlineSync.question('Введите ответ: ');
     return answer;
   }
 
-  showGameQuestionResult() {
+  showGameQuestionResult(question, answerIsRight) {
     this.#renderGameHeader();
 
-    console.log(this.#model.getCurrentQuestion().question);
+    console.log(question.question);
     console.log();
-    if (this.#model.answerIsRight()) {
+    if (answerIsRight) {
       console.log('Верно!');
     } else {
-      console.log(`Неверно! Правильный ответ: ${this.#model.getCurrentQuestion().answer}`);
+      console.log(`Неверно! Правильный ответ: ${question.answer}`);
     }
     console.log();
     console.log('Нажмите любую клавишу для продолжения...');
     readlineSync.question();
   }
 
-  renderResult() {
-    const { rightQuestions, totalQuestions } = this.#model.getGameStatistics();
+  renderResult(gameStatistics) {
+    const { rightQuestions, totalQuestions } = gameStatistics;
     console.clear();
     console.log('Вы закончили игру!');
     console.log();
